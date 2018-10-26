@@ -1,0 +1,11 @@
+2018/10/26 21:29:38 Error: fork/exec ./log.php: no such file or directory
+2018/10/26 21:39:55 Error: exec: "logme.php": executable file not found in $PATH
+2018/10/26 21:39:56 Error: exec: "logme.php": executable file not found in $PATH
+2018/10/26 21:39:56 Error: exec: "logme.php": executable file not found in $PATH
+2018/10/26 21:39:57 Error: exec: "logme.php": executable file not found in $PATH
+2018/10/26 21:39:57 Error: exec: "logme.php": executable file not found in $PATH
+2018/10/26 21:39:57 Error: exec: "logme.php": executable file not found in $PATH
+2018/10/26 21:39:57 Error: exec: "logme.php": executable file not found in $PATH
+2018/10/26 21:39:57 Error: exec: "logme.php": executable file not found in $PATH
+2018/10/26 21:39:57 Error: exec: "logme.php": executable file not found in $PATH
+2018/10/26 21:39:58 Error: exec: "logme.php": executable file not found in $PATH
