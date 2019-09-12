@@ -5,3 +5,28 @@ connection:
     sslcacert: "ssl/cacert.pem"
     sslcert: "ssl/cert.pem"
     sslkey: "ssl/key.pem"
+
+exchange:
+    name: "test-exchange"
+    type: "topic"
+    durable: true
+    autodelete: false
+    internal: false
+    nowait: false
+
+queue:
+    name: "test-queue"
+    routingkeys: 
+        - "#"
+        - "todo"
+    durable: true
+    autodelete: false
+    exclusive: false
+    nowait: false
+
+consumer:
+    tag: "test-consumer"
+    noack: false
+    exclusive: false
+    nolocal: false
+    nowait: false
