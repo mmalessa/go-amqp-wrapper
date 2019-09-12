@@ -9,15 +9,14 @@ package main
 "github.com/streadway/amqp"
 */
 import (
-	"crypto/tls"
-	"crypto/x509"
 	"flag"
-	"io/ioutil"
+	"fmt"
 	"log"
-	"strings"
-
-	"github.com/streadway/amqp"
+	"os"
 )
+
+var config *Config
+var err error
 
 var (
 	uri = flag.String("uri", "amqps://testuser:testuser@localhost:5671/test", "AMQP URI")
@@ -35,27 +34,18 @@ func init() {
 
 func main() {
 
-	if strings.HasPrefix(*uri, "amqps:") {
-		// SSL connection
-		cfg := new(tls.Config)
-		cfg.RootCAs = x509.NewCertPool()
-		cfg.ServerName = "PmServer"
-		if ca, err := ioutil.ReadFile("ssl/cacert.pem"); err == nil {
-			cfg.RootCAs.AppendCertsFromPEM(ca)
-		}
-		if cert, err := tls.LoadX509KeyPair("ssl/cert.pem", "ssl/key.pem"); err == nil {
-			cfg.Certificates = append(cfg.Certificates, cert)
-		}
-		conn, err := amqp.DialTLS(*uri, cfg)
-		log.Printf("SSL conn: %v, err: %v", conn, err)
-	} else {
-		// connection
-		conn, err := amqp.Dial(*uri)
-		if err != nil {
-			//fmt.Errorf("Channel: %s", err)
-		}
-		log.Printf("conn: %v, err: %v", conn, err)
+	configFile := "config.yaml"
+	if len(os.Args) > 1 {
+		configFile = os.Args[1]
 	}
+	config, err = loadConfig(configFile)
+	if err != nil {
+		log.Println(fmt.Sprintf("ERROR: %v", err))
+		return
+	}
+
+	connection, err := getConnection(config.Connection)
+	log.Printf("conn: %v, err: %v", connection, err)
 
 	// channel, err := conn.Channel()
 	// if err != nil {
@@ -74,6 +64,6 @@ func main() {
 	// 	//return nil, fmt.Errorf("Exchange Declare: %s", err)
 	// }
 
-	for {
-	}
+	// for {
+	// }
 }

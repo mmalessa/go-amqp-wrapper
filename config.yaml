@@ -1,0 +1,7 @@
+connection:
+    uri: "amqps://testuser:testuser@localhost:5671/test"
+    # uri: "amqp://testuser:testuser@localhost:5672/test"
+    servername: "PmServer"
+    sslcacert: "ssl/cacert.pem"
+    sslcert: "ssl/cert.pem"
+    sslkey: "ssl/key.pem"
