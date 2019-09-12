@@ -48,7 +48,7 @@ func NewConsumer(cfg Config) (*Consumer, error) {
 	}
 
 	go func() {
-		fmt.Printf("closing: %s", <-c.conn.NotifyClose(make(chan *amqp.Error)))
+		fmt.Printf("Closing: %s\n", <-c.conn.NotifyClose(make(chan *amqp.Error)))
 	}()
 
 	log.Printf("got Connection, getting Channel")
@@ -113,6 +113,7 @@ func NewConsumer(cfg Config) (*Consumer, error) {
 		return nil, fmt.Errorf("Queue Consume: %s", err)
 	}
 
+	log.Printf("Start consuming")
 	go handle(deliveries, c.done)
 
 	return c, nil

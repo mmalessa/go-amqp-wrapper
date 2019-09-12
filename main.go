@@ -4,6 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 var config *Config
@@ -25,10 +28,10 @@ func main() {
 		log.Fatalf("%s", err)
 	}
 
-	// FIXME - add channel to nice shutt down
-	for {
-	}
-	log.Printf("shutting down")
+	stopServerChannel := make(chan os.Signal, 1)
+	signal.Notify(stopServerChannel, os.Interrupt, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
+	sig := <-stopServerChannel
+	log.Printf("Ask for stop with signal: %T %s\n", sig, sig)
 
 	if err := c.Shutdown(); err != nil {
 		log.Fatalf("error during shutdown: %s", err)
