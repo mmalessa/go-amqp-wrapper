@@ -140,7 +140,7 @@ func (c *Consumer) Shutdown() error {
 
 func handle(deliveries <-chan amqp.Delivery, done chan error, executable string) {
 	for d := range deliveries {
-		cmd := getExecutableCommand(executable)
+		cmd := getCommand(executable)
 		deliveryMarshalled, err := json.Marshal(d)
 		if err != nil {
 			log.Fatal(err)
@@ -160,7 +160,7 @@ func handle(deliveries <-chan amqp.Delivery, done chan error, executable string)
 	done <- nil
 }
 
-func getExecutableCommand(executable string) *exec.Cmd {
+func getCommand(executable string) *exec.Cmd {
 	if split := strings.Split(executable, " "); len(split) > 1 {
 		command, args := split[0], split[1:]
 		return exec.Command(command, args...)
