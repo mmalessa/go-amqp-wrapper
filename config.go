@@ -35,11 +35,12 @@ type ConfigQueue struct {
 }
 
 type ConfigConsumer struct {
-	Tag       string
-	NoAck     bool
-	Exclusive bool
-	NoLocal   bool
-	NoWait    bool
+	Tag        string
+	NoAck      bool
+	Exclusive  bool
+	NoLocal    bool
+	NoWait     bool
+	Executable string
 }
 
 type Config struct {

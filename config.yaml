@@ -30,3 +30,4 @@ consumer:
     exclusive: false
     nolocal: false
     nowait: false
+    executable: "/usr/bin/php example_command.php"

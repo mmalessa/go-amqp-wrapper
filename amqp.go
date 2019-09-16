@@ -1,11 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os/exec"
 	"strings"
 
 	"github.com/streadway/amqp"
@@ -114,7 +117,7 @@ func NewConsumer(cfg Config) (*Consumer, error) {
 	}
 
 	log.Printf("Start consuming")
-	go handle(deliveries, c.done)
+	go handle(deliveries, c.done, cfg.Consumer.Executable)
 
 	return c, nil
 }
@@ -135,16 +138,33 @@ func (c *Consumer) Shutdown() error {
 	return <-c.done
 }
 
-func handle(deliveries <-chan amqp.Delivery, done chan error) {
+func handle(deliveries <-chan amqp.Delivery, done chan error, executable string) {
 	for d := range deliveries {
-		log.Printf(
-			"got %dB delivery: [%v] %q",
-			len(d.Body),
-			d.DeliveryTag,
-			d.Body,
-		)
+		cmd := getExecutableCommand(executable)
+		deliveryMarshalled, err := json.Marshal(d)
+		if err != nil {
+			log.Fatal(err)
+		}
+		cmd.Stdin = strings.NewReader(string(deliveryMarshalled))
+		var out bytes.Buffer
+		cmd.Stdout = &out
+		err = cmd.Run()
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(out.String())
+
 		d.Ack(false)
 	}
 	log.Printf("handle: deliveries channel closed")
 	done <- nil
+}
+
+func getExecutableCommand(executable string) *exec.Cmd {
+	if split := strings.Split(executable, " "); len(split) > 1 {
+		command, args := split[0], split[1:]
+		return exec.Command(command, args...)
+	} else {
+		return exec.Command(executable)
+	}
 }
