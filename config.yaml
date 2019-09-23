@@ -1,6 +1,11 @@
 connection:
     uri: "amqps://testuser:testuser@localhost:5671/test"
     # uri: "amqp://testuser:testuser@localhost:5672/test"
+
+    # ServerName is used to verify the hostname on the returned
+    # certificates unless InsecureSkipVerify is given. It is also included
+    # in the client's handshake to support virtual hosting unless it is
+    # an IP address.
     servername: "PmServer"
     sslcacert: "ssl/cacert.pem"
     sslcert: "ssl/cert.pem"
@@ -13,6 +18,7 @@ exchange:
     autodelete: false
     internal: false
     nowait: false
+    arguments: ~
 
 queue:
     name: "test-queue"
@@ -23,11 +29,46 @@ queue:
     autodelete: false
     exclusive: false
     nowait: false
+    arguments:
+        x-dead-letter-exchange: "test-queue"
+        x-dead-letter-routing-key: "rejected"
+        # x-max-priority: 3 # TODO: value %!t(int=3) not supported
 
 consumer:
+
     tag: "test-consumer"
+    # When autoAck (also known as noAck) is true, the server will acknowledge deliveries 
+    # to this consumer prior to writing the delivery to the network. 
+    # When autoAck is true, the consumer should not call Delivery.Ack. 
+    # Automatically acknowledging deliveries means that some deliveries may get lost if 
+    # the consumer is unable to process them after the server delivers them. 
+    # See http://www.rabbitmq.com/confirms.html for more details. 
     noack: false
+
+    # When exclusive is true, the server will ensure that this is the sole consumer from this queue. 
+    # When exclusive is false, the server will fairly distribute deliveries across multiple consumers. 
     exclusive: false
-    nolocal: false
+
+    # When noWait is true, do not wait for the server to confirm the request and immediately begin deliveries. 
+    # If it is not possible to consume, a channel exception will be raised and the channel will be closed. 
     nowait: false
+    
+    # QOS OPTIONS
+
+    # With a prefetch count greater than zero, the server will deliver that many messages to consumers 
+    # before acknowledgments are received. The server ignores this option when consumers are started with 
+    # noAck because no acknowledgments are expected or sent. 
+    prefetchcount: 1
+
+    # With a prefetch size greater than zero, the server will try to keep at least that many bytes of deliveries 
+    # flushed to the network before receiving acknowledgments from the consumers. 
+    # This option is ignored when consumers are started with noAck. 
+    prefetchsize: 0
+
+    # When global is true, these Qos settings apply to all existing and future consumers on all channels 
+    # on the same connection. When false, the Channel.Qos settings will apply to all existing and 
+    # future consumers on this channel. 
+    global: false
+
+
     executable: "/usr/bin/php example_command.php"

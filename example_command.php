@@ -21,7 +21,7 @@ if (false === $message) {
   fwrite(STDERR, "failed to read body from STDIN\n");
   exit(1);
 }
-echo $message . PHP_EOL . PHP_EOL;
+// echo $message . PHP_EOL . PHP_EOL;
 
 $msg = json_decode($message, true);
 print_r($msg);

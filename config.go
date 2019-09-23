@@ -1,10 +1,11 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
+
+	"github.com/streadway/amqp"
 
 	"gopkg.in/yaml.v2"
 )
@@ -23,7 +24,7 @@ type ConfigExchange struct {
 	AutoDelete bool
 	Internal   bool
 	NoWait     bool
-	// Arguments  []string
+	Arguments  amqp.Table
 }
 type ConfigQueue struct {
 	Name        string
@@ -32,15 +33,18 @@ type ConfigQueue struct {
 	Exclusive   bool
 	NoWait      bool
 	RoutingKeys []string
+	Arguments   amqp.Table
 }
 
 type ConfigConsumer struct {
-	Tag        string
-	NoAck      bool
-	Exclusive  bool
-	NoLocal    bool
-	NoWait     bool
-	Executable string
+	Tag           string
+	NoAck         bool
+	Exclusive     bool
+	NoWait        bool
+	PrefetchCount int
+	PrefetchSize  int
+	Global        bool
+	Executable    string
 }
 
 type Config struct {
@@ -70,9 +74,9 @@ func loadConfig(location string) (*Config, error) {
 	}
 
 	// FOR DEBUG ONLY
-	cfgM, _ := json.MarshalIndent(cfg, "", "  ")
-	fmt.Print("CONFIG: ")
-	fmt.Println(string(cfgM))
+	// cfgM, _ := json.MarshalIndent(cfg, "", "  ")
+	// fmt.Print("CONFIG: ")
+	// fmt.Println(string(cfgM))
 
 	return cfg, err
 }

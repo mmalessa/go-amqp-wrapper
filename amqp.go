@@ -68,7 +68,7 @@ func NewConsumer(cfg Config) (*Consumer, error) {
 		cfg.Exchange.AutoDelete, // delete when complete
 		cfg.Exchange.Internal,   // internal
 		cfg.Exchange.NoWait,     // noWait
-		nil,                     // arguments
+		cfg.Exchange.Arguments,  // arguments
 	); err != nil {
 		return nil, fmt.Errorf("Exchange Declare: %s", err)
 	}
@@ -80,7 +80,7 @@ func NewConsumer(cfg Config) (*Consumer, error) {
 		cfg.Queue.AutoDelete, // delete when unused
 		cfg.Queue.Exclusive,  // exclusive
 		cfg.Queue.NoWait,     // noWait
-		nil,                  // arguments
+		cfg.Queue.Arguments,  // arguments
 	)
 	if err != nil {
 		return nil, fmt.Errorf("Queue Declare: %s", err)
@@ -103,14 +103,22 @@ func NewConsumer(cfg Config) (*Consumer, error) {
 	}
 
 	log.Printf("Queue bound to Exchange, starting Consume (consumer tag %q)", c.tag)
+	if err = c.channel.Qos(
+		cfg.Consumer.PrefetchCount,
+		cfg.Consumer.PrefetchSize,
+		cfg.Consumer.Global,
+	); err != nil {
+		return nil, fmt.Errorf("Qos: %s", err)
+	}
+
 	deliveries, err := c.channel.Consume(
 		queue.Name,             // name
 		c.tag,                  // consumerTag,
 		cfg.Consumer.NoAck,     // noAck
 		cfg.Consumer.Exclusive, // exclusive
-		cfg.Consumer.NoLocal,   // noLocal
-		cfg.Consumer.NoWait,    // noWait
-		nil,                    // arguments
+		false,               // noLocal
+		cfg.Consumer.NoWait, // noWait
+		nil,                 // arguments
 	)
 	if err != nil {
 		return nil, fmt.Errorf("Queue Consume: %s", err)
