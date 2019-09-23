@@ -1,4 +1,8 @@
 <?php
+const ACK = 0;
+const REJECT = 1;
+const REJECT_REQUEUE =2;
+
 echo "This is Example command\n";
 // // Read the metadata from fd3.
 // $metadata = file_get_contents("php://fd/3");
@@ -28,3 +32,5 @@ print_r($msg);
 echo PHP_EOL;
 
 echo base64_decode($msg['Body']) . PHP_EOL;
+
+exit(ACK);

@@ -10,6 +10,7 @@ import (
 	"log"
 	"os/exec"
 	"strings"
+	"syscall"
 
 	"github.com/streadway/amqp"
 )
@@ -148,6 +149,9 @@ func (c *Consumer) Shutdown() error {
 
 func handle(deliveries <-chan amqp.Delivery, done chan error, executable string) {
 	for d := range deliveries {
+
+		log.Printf("Consuming message: %d", d.DeliveryTag)
+
 		cmd := getCommand(executable)
 		deliveryMarshalled, err := json.Marshal(d)
 		if err != nil {
@@ -157,15 +161,35 @@ func handle(deliveries <-chan amqp.Delivery, done chan error, executable string)
 		var out bytes.Buffer
 		cmd.Stdout = &out
 		err = cmd.Run()
+		var exitCode = 0
 		if err != nil {
-			log.Fatal(err)
+			exitCode = getExitCode(err)
 		}
-		fmt.Println(out.String())
 
-		d.Ack(false)
+		// log.Println(exitCode)
+		// fmt.Println(out.String())
+
+		switch exitCode {
+		case 0:
+			d.Ack(false)
+		case 1:
+			d.Reject(false)
+		case 2:
+			d.Reject(true)
+		}
+
 	}
 	log.Printf("handle: deliveries channel closed")
 	done <- nil
+}
+
+func getExitCode(err error) int {
+	if exitErr, ok := err.(*exec.ExitError); ok {
+		if status, ok := exitErr.Sys().(syscall.WaitStatus); ok {
+			return status.ExitStatus()
+		}
+	}
+	return 1
 }
 
 func getCommand(executable string) *exec.Cmd {
