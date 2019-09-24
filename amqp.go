@@ -126,7 +126,7 @@ func NewConsumer(cfg Config) (*Consumer, error) {
 	}
 
 	log.Printf("Start consuming")
-	go handle(deliveries, c.done, cfg.Consumer.Executable)
+	go handle(deliveries, c.done, cfg)
 
 	return c, nil
 }
@@ -147,12 +147,12 @@ func (c *Consumer) Shutdown() error {
 	return <-c.done
 }
 
-func handle(deliveries <-chan amqp.Delivery, done chan error, executable string) {
+func handle(deliveries <-chan amqp.Delivery, done chan error, cfg Config) {
 	for d := range deliveries {
 
 		log.Printf("Consuming message: %d", d.DeliveryTag)
 
-		cmd := getCommand(executable)
+		cmd := getCommand(cfg.Consumer.Executable)
 		deliveryMarshalled, err := json.Marshal(d)
 		if err != nil {
 			log.Fatal(err)
@@ -166,8 +166,9 @@ func handle(deliveries <-chan amqp.Delivery, done chan error, executable string)
 			exitCode = getExitCode(err)
 		}
 
-		// log.Println(exitCode)
-		// fmt.Println(out.String())
+        if (cfg.DebugMode) {
+            fmt.Println(out.String())
+        }
 
 		switch exitCode {
 		case 0:

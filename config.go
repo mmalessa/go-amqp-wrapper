@@ -48,6 +48,7 @@ type ConfigConsumer struct {
 }
 
 type Config struct {
+    DebugMode   bool
 	Connection ConfigConnection
 	Exchange   ConfigExchange
 	Queue      ConfigQueue
