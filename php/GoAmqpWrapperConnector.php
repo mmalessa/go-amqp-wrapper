@@ -11,7 +11,7 @@ class GoAmqpWrapperConnector
 {
     const ACK = 0;
     const REJECT = 1;
-    const REJECT_REQUEUE =2;
+    const REJECT_REQUEUE = 2;
 
     private $msg;
 
@@ -135,5 +135,7 @@ class GoAmqpWrapperConnector
     {
         return base64_decode($this->msg['Body']);
     }
+
+
 
 }
