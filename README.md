@@ -1,6 +1,7 @@
 # go-amqp-wrapper
 Go AMQP wrapper  
--- experiments only --
+https://github.com/mmalessa/go-amqp-wrapper  
+Use it at your own risk.
 
 Based on https://github.com/streadway/amqp  
 Inspired by https://github.com/corvus-ch/rabbitmq-cli-consumer
