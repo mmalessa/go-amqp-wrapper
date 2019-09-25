@@ -32,9 +32,9 @@ queue:
     exclusive: false
     nowait: false
     arguments:
-        x-dead-letter-exchange: "test-queue"
-        x-dead-letter-routing-key: "rejected"
-        # x-max-priority: 3 # TODO: value %!t(int=3) not supported
+        x-dead-letter-exchange: "test-exchange"
+#        x-dead-letter-routing-key: "rejected"
+#        x-max-priority: 3 # TODO: value %!t(int=3) not supported
 
 consumer:
 
