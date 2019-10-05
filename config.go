@@ -7,7 +7,7 @@ import (
 
 	"github.com/streadway/amqp"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 type ConfigConnection struct {
@@ -48,7 +48,7 @@ type ConfigConsumer struct {
 }
 
 type Config struct {
-    DebugMode   bool
+	DebugMode  bool
 	Connection ConfigConnection
 	Exchange   ConfigExchange
 	Queue      ConfigQueue
