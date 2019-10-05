@@ -1,4 +1,4 @@
-debugmode: true
+debugmode: false
 
 connection:
     uri: "amqps://testuser:testuser@localhost:5671/test"
@@ -33,8 +33,9 @@ queue:
     nowait: false
     arguments:
         x-dead-letter-exchange: "test-exchange"
-#        x-dead-letter-routing-key: "rejected"
-#        x-max-priority: 3 # TODO: value %!t(int=3) not supported
+        # x-dead-letter-routing-key: "rejected"
+        # x-max-priority: 3
+        # x-message-ttl: 100
 
 consumer:
 

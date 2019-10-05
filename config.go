@@ -26,6 +26,7 @@ type ConfigExchange struct {
 	NoWait     bool
 	Arguments  amqp.Table
 }
+
 type ConfigQueue struct {
 	Name        string
 	Durable     bool
@@ -74,10 +75,25 @@ func loadConfig(location string) (*Config, error) {
 		return cfg, fmt.Errorf("Unmarshal: %v", err)
 	}
 
+	cfg.Exchange.Arguments = castConfigArguments(cfg.Exchange.Arguments)
+	cfg.Queue.Arguments = castConfigArguments(cfg.Queue.Arguments)
+
 	// FOR DEBUG ONLY
 	// cfgM, _ := json.MarshalIndent(cfg, "", "  ")
 	// fmt.Print("CONFIG: ")
 	// fmt.Println(string(cfgM))
 
 	return cfg, err
+}
+
+// RabbitMQ expects int32 for integer values.
+func castConfigArguments(arguments amqp.Table) amqp.Table {
+	for k, v := range arguments {
+		switch v.(type) {
+		case int:
+			arguments[k] = int32(v.(int))
+		default:
+		}
+	}
+	return arguments
 }

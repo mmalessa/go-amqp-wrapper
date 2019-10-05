@@ -166,9 +166,9 @@ func handle(deliveries <-chan amqp.Delivery, done chan error, cfg Config) {
 			exitCode = getExitCode(err)
 		}
 
-        if (cfg.DebugMode) {
-            fmt.Println(out.String())
-        }
+		if cfg.DebugMode {
+			fmt.Println(out.String())
+		}
 
 		switch exitCode {
 		case 0:
